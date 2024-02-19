@@ -3,11 +3,12 @@
 ## Table of Content
 
 - [Description](#description)
-- [Setting up the production environment](#installation-instructions)
-- [Migrating to the Azure SQL Database](#migrating-to-the-zzure-sql-database)
-- [Data Backup and Restoration](#file-structure)
-- [Disaster Recovery](#license-information)
-- [Geo Replication and Failover](#license-information)
+- [Setting up the production environment](#setting-up-the-production-environment)
+- [Migrating to the Azure SQL Database](#migrating-to-the-azure-sql-database)
+- [Data Backup and Restoration](#data-backup-and-restoration)
+- [Disaster Recovery](#disaster-recovery)
+- [Geo Replication and Failover](#geo-replication-and-failover)
+- [Microsoft Entra Directory Integration](#microsoft-entra-directory-integration)
 
 ## Description
 
@@ -69,7 +70,7 @@ Using the backup stored in the blob storage container, restore it into the devel
 
 Set up a weekly backup schedule:
 
-First make sure the SQL Server Agent is started ![SQL Server Agent Start](image-10.png)
+First make sure the SQL Server Agent is started<br>![SQL Server Agent Start](image-10.png)
 
 Create your SQL Server Credential by running the following
 
@@ -116,19 +117,37 @@ Additionally, I oversaw failover tests aimed at simulating real-world scenarios.
 
 Go to the production DB and set up a replica in a different region, preferably far from your primary DBs location.![replica](image-16.png)
 
+![Geo replica](image-17.png)
+
+Orchestrate a planned failover to the secondary region and a failback to the primary to test the functionality and be prepared if it's ever needed.<br>
+![alt text](image-18.png)
+
+## Microsoft Entra Directory Integration
+
+I integrated Microsoft Entra Directory with my Azure SQL Database setup, introducing a more organized way to manage who can access my data.
+
+I began by creating an admin account that holds the authority to manage and oversee my production database. Additionally, I provisioned database reader users, accounts that possess read-only access to the database. By offering restricted access, I ensure that team members can derive the necessary insights without the risk of unintended data modifications.
+
+Enable Microsoft Entra ID authentication for the SQL Server that hosts the Azure SQL production database and set up an admin
+![Entra](image-19.png)
+
+Create a user and assign the db_datareader role
+![user](image-20.png)
+
+Reconnect to the DB and ensure the new user has read only access
+![connect](image-21.png)
+
+![user](image-22.png)
+
 ## What I learned
 
-- **Object-Oriented Programming (OOP):** Understanding of classes, methods, and attributes in Python.
-- **Data Extraction Techniques:** Handling diverse data sources, including databases, PDFs, APIs, S3 buckets, and JSON files.
-- **Database Operations:** Connecting to databases, querying tables, and uploading data using SQLAlchemy.
-- **Data Cleaning and Transformation:** Techniques for cleaning and transforming data to meet specific requirements.
-- **SQL Querying:** Proficiency in writing SQL queries to retrieve, filter, and manipulate data from relational databases.
-- **Data Type Transformation:** Knowledge of converting and standardizing data types within SQL, such as changing column types and handling data type conversions.
-- **Database Schema Understanding:** Understanding and working with the structure of a relational database, including tables, columns, and relationships.
-- **Data Integrity:** Techniques for maintaining data integrity through constraints, data validation, and ensuring accurate data representation in the database.
-- **Data Filtering and Aggregation:** Skill in using SQL to filter and aggregate data, enabling the extraction of meaningful insights from large datasets.
-- **Database Maintenance:** Knowledge of routine database maintenance tasks, including updating records, adding new data, and ensuring consistent data quality.
-
-```
-
-```
+- Provisioning a Windows Virtual Machine as the foundation of my cloud-based database system.
+- Migrating an on-premise database to Azure SQL Database, ensuring successful transfer of schema and data.
+- Establishing a development environment alongside the production database for testing and experimentation.
+- Implementing an automated backup solution for the development environment to safeguard ongoing work.
+- Conducting a disaster recovery simulation to gain firsthand experience in recovery procedures.
+- Configuring geo-replication for enhanced data protection and continuous availability.
+- Overseeing failover tests to simulate real-world scenarios and assess secondary database availability.
+- Integrating Microsoft Entra Directory with Azure SQL Database for organized access management.
+- Creating admin and database reader user accounts to manage and restrict access to the database.
+- Understanding the importance of data security, redundancy, and access control in a cloud-based database environment.
